@@ -12,7 +12,7 @@ addpath(genpath('./utils'));
 addpath(genpath('../../gpuNUFFT'));
 
 %% Reconstruction parameters
-maxitCG = 20;
+maxitCG = 60;
 alpha = 1e-6;
 tol = 1e-6;
 display = 1;
@@ -85,8 +85,11 @@ disp(['Time forward: ', num2str(timeFT), ' s']);
 
 %% CGSENSE Reconstruction
 tic
+profile on
 img_cgsense = cg_sense_2d(rawdata,FT,senseEst,1,alpha,tol,maxitCG,display,useMultiCoil);
 timeCG = toc;
+profile off
+profile viewer
 disp(['Time CG SENSE: ', num2str(timeCG), ' s']);
 
 %% Display

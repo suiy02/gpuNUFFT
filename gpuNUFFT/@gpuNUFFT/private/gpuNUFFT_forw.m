@@ -19,7 +19,20 @@ else
 end
 
 % split and prepare data
-bb = [real(bb(:))'; imag(bb(:))'];
+% bb = [real(bb(:))'; imag(bb(:))'];
+% bb = reshape(bb,[2 a.params.img_dims(1)*a.params.img_dims(2)*max(1,a.params.img_dims(3)) nChn]);
+
+% bb_tmp = zeros(2,numel(bb),'single'); 
+% bb_tmp(1,:) = reshape(real(bb),1,[]);
+% bb_tmp(2,:) = reshape(imag(bb),1,[]);
+try
+    bb = complex2real(complex(bb));
+catch
+    bb_tmp = zeros(2,numel(bb),'single');
+    bb_tmp(1,:) = reshape(real(bb),1,[]);
+    bb_tmp(2,:) = reshape(imag(bb),1,[]);
+  bb = bb_tmp;
+end
 bb = reshape(bb,[2 a.params.img_dims(1)*a.params.img_dims(2)*max(1,a.params.img_dims(3)) nChn]);
 
 if a.verbose
@@ -53,9 +66,16 @@ if a.verbose
     disp(['returned data dimensions:' num2str(size(m))]);
 end
 
-if (nChn > 1)
-    ress(:,:) = squeeze(m(1,:,:) + 1i*(m(2,:,:)));
-else
-    ress = squeeze(transpose(m(1,:) + 1i*(m(2,:))));
-end
+try
+%     ress = squeeze(real2complex(m));
+    ress = real2complex(m);
+    ress = reshape(ress,size(ress,2),size(ress,3));
 
+catch
+    if (nChn > 1)
+        
+        ress(:,:) = squeeze(m(1,:,:) + 1i*(m(2,:,:)));
+    else
+        ress = squeeze(transpose(m(1,:) + 1i*(m(2,:))));
+    end
+end

@@ -68,9 +68,11 @@ disp(['Time forward: ', num2str(timeFT), ' s']);
 
 %% CGSENSE Reconstruction
 mask = w;
+profile on
 tic
 img_cgsense = cg_sense_3d(rawdata,FT,senseEst,mask,alpha,tol,maxitCG,display,disp_slice,useMultiCoil);
 timeCG = toc;
+profile viewer
 disp(['Time CG SENSE: ', num2str(timeCG), ' s']);
 
 %% Display

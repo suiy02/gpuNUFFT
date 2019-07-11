@@ -22,38 +22,68 @@ if a.sensChn ~= 0 && ...
 end
 
 %prepare data
-if (nChn > 1)
-    if a.verbose
-        disp('multiple coil data passed');
-    end
-    kspace = bb(:,:);
-    kspace = [real(kspace(:))'; imag(kspace(:))'];
+
+try
+    kspace = complex2real(reshape(bb,1,[]));
     kspace = reshape(kspace,[2 a.params.trajectory_length nChn]);
-else    
-    kspace = bb;
-    kspace = [real(kspace(:))'; imag(kspace(:))'];
-end    
+    
+catch
+    
+    if (nChn > 1)
+        if a.verbose
+            disp('multiple coil data passed');
+        end
+        %     kspace = bb(:,:);
+        %     kspace = [real(kspace(:))'; imag(kspace(:))'];
+        bb_tmp = reshape(bb,size(bb,1),[]);
+        kspace = zeros(2,numel(bb),'single');
+        kspace(1,:) = reshape(real(bb_tmp),1,[]);
+        kspace(2,:) = reshape(imag(bb_tmp),1,[]);
+        kspace = reshape(kspace,[2 a.params.trajectory_length nChn]);
+    else
+        %     kspace = bb;
+        %     kspace = [real(kspace(:))'; imag(kspace(:))'];
+        kspace = zeros(2,numel(bb),'single');
+        kspace(1,:) = reshape(real(bb),1,[]);
+        kspace(2,:) = reshape(imag(bb),1,[]);
+    end
+end
 if a.verbose
     disp('call gpuNUFFT mex kernel');
 end
 
 if a.atomic == true
-    ress = mex_gpuNUFFT_adj_atomic_f(single(kspace),(a.dataIndices),single(a.coords),(a.sectorDataCount),(a.sectorProcessingOrder),(a.sectorCenters(:)),single(a.densSorted),single(sens),single(a.deapoFunction),a.params);
+%     ress = mex_gpuNUFFT_adj_atomic_f(single(kspace),(a.dataIndices),single(a.coords),(a.sectorDataCount),(a.sectorProcessingOrder),(a.sectorCenters(:)),single(a.densSorted),single(sens),single(a.deapoFunction),a.params);
+    ress = mex_gpuNUFFT_adj_atomic_f(single(kspace),(a.dataIndices),single(a.coords),(a.sectorDataCount),(a.sectorProcessingOrder),reshape(a.sectorCenters,[],1),single(a.densSorted),single(sens),single(a.deapoFunction),a.params);
+
 else
-    ress = mex_gpuNUFFT_adj_f(single(kspace),(a.dataIndices),single(a.coords),(a.sectorDataCount),(a.sectorProcessingOrder),(a.sectorCenters(:)),single(a.densSorted),single(sens),single(a.deapoFunction),a.params);
-end;
+%     ress = mex_gpuNUFFT_adj_f(single(kspace),(a.dataIndices),single(a.coords),(a.sectorDataCount),(a.sectorProcessingOrder),(a.sectorCenters(:)),single(a.densSorted),single(sens),single(a.deapoFunction),a.params);
+    ress = mex_gpuNUFFT_adj_f(single(kspace),(a.dataIndices),single(a.coords),(a.sectorDataCount),(a.sectorProcessingOrder),reshape(a.sectorCenters,[],1),single(a.densSorted),single(sens),single(a.deapoFunction),a.params);
+
+end
 
 % generate complex output from split vector
-if (a.params.is2d_processing)
-  if (nChn > 1)
-    ress = squeeze(ress(1,:,:,:) + 1i*(ress(2,:,:,:)));
-  else
-    ress = squeeze(ress(1,:,:) + 1i*(ress(2,:,:)));
-  end
-else
-  if (nChn > 1)
-    ress = squeeze(ress(1,:,:,:,:) + 1i*(ress(2,:,:,:,:)));
-  else
-    ress = squeeze(ress(1,:,:,:) + 1i.*(ress(2,:,:,:)));
-  end
+
+try
+    ress = real2complex(ress);
+    [~,d2,d3,d4,d5] = size(ress);
+    ress = reshape(ress,d2,d3,d4,d5);
+    
+catch
+    
+    
+    
+    if (a.params.is2d_processing)
+        if (nChn > 1)
+            ress = squeeze(ress(1,:,:,:) + 1i*(ress(2,:,:,:)));
+        else
+            ress = squeeze(ress(1,:,:) + 1i*(ress(2,:,:)));
+        end
+    else
+        if (nChn > 1)
+            ress = squeeze(ress(1,:,:,:,:) + 1i*(ress(2,:,:,:,:)));
+        else
+            ress = squeeze(ress(1,:,:,:) + 1i.*(ress(2,:,:,:)));
+        end
+    end
 end
