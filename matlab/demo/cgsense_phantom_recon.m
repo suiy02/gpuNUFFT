@@ -17,7 +17,7 @@ useGPU = true;
 useMultiCoil = 1;
 
 %% Reconstruction parameters
-maxitCG = 10;
+maxitCG = 60;
 alpha = 1e-6;
 tol = 1e-6;
 display = 1;

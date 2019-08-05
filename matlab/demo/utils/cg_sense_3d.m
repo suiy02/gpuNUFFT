@@ -108,5 +108,6 @@ else
      y = y + cconj(:,:,:,ii) .* (FT' * (FT * (c(:,:,:,ii).*dx)));
   end
 end
-y = y(:);
+% y = y(:);
+y = reshape(y,[],1);
 % end function applyM

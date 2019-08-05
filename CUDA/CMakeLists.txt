@@ -37,6 +37,7 @@ if(GEN_MEX_FILES)
   elseif(UNIX)
 #    SET(MATLAB_ROOT_DIR "/usr/local/MATLAB/R2010b" CACHE STRING "MATLAB Installation Directory")
     SET(MATLAB_ROOT_DIR "/usr/local/MATLAB/R2017b" CACHE STRING "MATLAB Installation Directory")
+ #   SET(MATLAB_ROOT_DIR "/usr/local/MATLAB/R2018a" CACHE STRING "MATLAB Installation Directory")
   endif()
 
   SET(MATLAB_DIR = "${MATLAB_ROOT_DIR}")

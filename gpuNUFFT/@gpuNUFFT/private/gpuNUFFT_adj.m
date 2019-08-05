@@ -23,12 +23,10 @@ end
 
 %prepare data
 
-try
+if 0
     kspace = complex2real(reshape(bb,1,[]));
     kspace = reshape(kspace,[2 a.params.trajectory_length nChn]);
-    
-catch
-    
+else
     if (nChn > 1)
         if a.verbose
             disp('multiple coil data passed');
@@ -64,15 +62,11 @@ end
 
 % generate complex output from split vector
 
-try
+if 0
     ress = real2complex(ress);
     [~,d2,d3,d4,d5] = size(ress);
     ress = reshape(ress,d2,d3,d4,d5);
-    
-catch
-    
-    
-    
+else
     if (a.params.is2d_processing)
         if (nChn > 1)
             ress = squeeze(ress(1,:,:,:) + 1i*(ress(2,:,:,:)));

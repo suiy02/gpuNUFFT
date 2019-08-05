@@ -25,7 +25,9 @@
 **/
 void cleanUp()
 {
-  cudaDeviceReset();
+  mexPrintf("gnuNUFFT_forw.cpp:cleanUP:cudaDeviceReset\n");
+  mexPrintf("SUI Debug:CUDA/src/gpu/matlab/gpuNUFFT_forw.cpp:cleanUp(): removed cudaDeviceReset()\n");
+  /*cudaDeviceReset();*/
 }
 
 /**

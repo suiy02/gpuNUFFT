@@ -25,9 +25,9 @@ end
 % bb_tmp = zeros(2,numel(bb),'single'); 
 % bb_tmp(1,:) = reshape(real(bb),1,[]);
 % bb_tmp(2,:) = reshape(imag(bb),1,[]);
-try
+if 0
     bb = complex2real(complex(bb));
-catch
+else
     bb_tmp = zeros(2,numel(bb),'single');
     bb_tmp(1,:) = reshape(real(bb),1,[]);
     bb_tmp(2,:) = reshape(imag(bb),1,[]);
@@ -66,12 +66,10 @@ if a.verbose
     disp(['returned data dimensions:' num2str(size(m))]);
 end
 
-try
-%     ress = squeeze(real2complex(m));
+if 0
     ress = real2complex(m);
     ress = reshape(ress,size(ress,2),size(ress,3));
-
-catch
+else
     if (nChn > 1)
         
         ress(:,:) = squeeze(m(1,:,:) + 1i*(m(2,:,:)));
