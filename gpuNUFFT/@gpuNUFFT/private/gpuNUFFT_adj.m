@@ -9,6 +9,13 @@ function ress = gpuNUFFT_adj(a,bb)
 % bb ... k-space data
 %        k x nChn
 %
+if a.params.trajectory_length ~=size(bb,1) % 2D input
+%     warning('sui modification');
+    bb = reshape(bb,[],size(bb,3));
+    if a.params.trajectory_length ~=size(bb,1) % 2D input
+        warning('k-space data size not match')
+    end
+end
 nChn = size(bb,2);
  
 % check if sens data (multichannel) is present and show

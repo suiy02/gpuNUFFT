@@ -82,7 +82,8 @@ if (kDims(1) ~= 2 && is2Dprocessing) || ...
 end
 
 % convert to single col
-w = w(:);    
+% w = w(:);    
+w = reshape(w,[],1);
 if size(w,1) ~= size(k,2)
     warning('gpuNUFFT:init:density','density compensation dim does not match k space data dim. k: %s w: %s',num2str(size(k)),num2str(size(w)));
 end
